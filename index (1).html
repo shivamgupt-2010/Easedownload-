@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paid File Hosting App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #6200ee;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 200px;
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+        }
+        
+        .menu-dropdown.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        .menu-item {
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        
+        .menu-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .menu-item.active {
+            background-color: #e0e0e0;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .home-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .home-content h2 {
+            margin-bottom: 20px;
+            color: #6200ee;
+        }
+        
+        .home-content p {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .file-slot {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        
+        .file-slot:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .file-slot.empty {
+            border: 2px dashed #ccc;
+            background-color: #f9f9f9;
+        }
+        
+        .file-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #6200ee;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            word-break: break-word;
+            max-width: 100%;
+        }
+        
+        .file-price {
+            background-color: #4CAF50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .file-actions {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6200ee;
+            font-size: 14px;
+        }
+        
+        .add-file-btn {
+            background-color: #6200ee;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        
+        .add-file-btn:hover {
+            background-color: #3700b3;
+        }
+        
+        .buy-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 500;
+            width: 100%;
+        }
+        
+        .buy-btn:hover {
+            background-color: #388E3C;
+        }
+        
+        .payment-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .payment-app-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .payment-app-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .admin-controls {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-toggle {
+            background-color: #6200ee;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .file-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .menu-dropdown {
+                width: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Paid File Hosting App</h1>
+            <button class="menu-btn" id="menuBtn">☰</button>
+            <div class="menu-dropdown" id="menuDropdown">
+                <a href="#" class="menu-item active" data-tab="home">Home</a>
+                <a href="#" class="menu-item" data-tab="ebooks">eBooks</a>
+                <a href="#" class="menu-item" data-tab="movies">Movies</a>
+                <a href="#" class="menu-item" data-tab="premium">Premium Videos</a>
+                <a href="#" class="menu-item" data-tab="apps">Apps</a>
+            </div>
+        </header>
+        
+        <!-- Admin Controls -->
+        <div class="admin-controls" id="adminControls" style="display: none;">
+            <h3>Admin Controls</h3>
+            <p>Use this section to upload files to empty slots</p>
+            <div id="currentUploadInfo"></div>
+            <input type="file" id="fileInput">
+            <button id="uploadBtn" style="display: none;">Upload File</button>
+        </div>
+        <button class="admin-toggle" id="adminToggle">Show Admin Controls</button>
+        
+        <!-- Home Tab -->
+        <div id="home" class="tab-content active">
+            <div class="home-content">
+                <h2>Welcome to Paid File Hosting</h2>
+                <p>Discover and purchase premium digital content. All files are available for just ₹10 each.</p>
+                <p>Browse our collection of eBooks, Movies, Premium Videos, and Apps. Click on any item to purchase and download.</p>
+            </div>
+        </div>
+        
+        <!-- eBooks Tab -->
+        <div id="ebooks" class="tab-content">
+            <div class="file-grid" id="ebooks-grid"></div>
+        </div>
+        
+        <!-- Movies Tab -->
+        <div id="movies" class="tab-content">
+            <div class="file-grid" id="movies-grid"></div>
+        </div>
+        
+        <!-- Premium Videos Tab -->
+        <div id="premium" class="tab-content">
+            <div class="file-grid" id="premium-grid"></div>
+        </div>
+        
+        <!-- Apps Tab -->
+        <div id="apps" class="tab-content">
+            <div class="file-grid" id="apps-grid"></div>
+        </div>
+        
+        <script>
+            // File storage in memory (in a real app, this would be server-side)
+            const fileStorage = {
+                ebooks: Array(6).fill(null),
+                movies: Array(6).fill(null),
+                premium: Array(6).fill(null),
+                apps: Array(6).fill(null)
+            };
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // DOM elements
+                const menuBtn = document.getElementById('menuBtn');
+                const menuDropdown = document.getElementById('menuDropdown');
+                const menuItems = document.querySelectorAll('.menu-item');
+                const tabContents = document.querySelectorAll('.tab-content');
+                const adminControls = document.getElementById('adminControls');
+                const adminToggle = document.getElementById('adminToggle');
+                const fileInput = document.getElementById('fileInput');
+                const uploadBtn = document.getElementById('uploadBtn');
+                const currentUploadInfo = document.getElementById('currentUploadInfo');
+                
+                // Current upload state
+                let currentUpload = {
+                    tab: null,
+                    slotId: null
+                };
+                
+                // Initialize UI
+                initializeFileSlots();
+                
+                // Menu button functionality
+                menuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menuDropdown.classList.toggle('show');
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function() {
+                    menuDropdown.classList.remove('show');
+                });
+                
+                // Menu item click handler
+                menuItems.forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Remove active class from all menu items and tabs
+                        menuItems.forEach(i => i.classList.remove('active'));
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        
+                        // Add active class to clicked menu item
+                        this.classList.add('active');
+                        
+                        // Show corresponding tab
+                        const tabId = this.getAttribute('data-tab');
+                        document.getElementById(tabId).classList.add('active');
+                        
+                        // Close menu
+                        menuDropdown.classList.remove('show');
+                    });
+                });
+                
+                // Admin toggle
+                adminToggle.addEventListener('click', function() {
+                    if (adminControls.style.display === 'none') {
+                        adminControls.style.display = 'block';
+                        adminToggle.textContent = 'Hide Admin Controls';
+                    } else {
+                        adminControls.style.display = 'none';
+                        adminToggle.textContent = 'Show Admin Controls';
+                    }
+                });
+                
+                // File input change handler
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files.length > 0 && currentUpload.tab && currentUpload.slotId !== null) {
+                        const file = e.target.files[0];
+                        currentUploadInfo.innerHTML = `
+                            <p>Uploading to: ${currentUpload.tab} tab, slot ${currentUpload.slotId}</p>
+                            <p>File: ${file.name}</p>
+                        `;
+                        uploadBtn.style.display = 'inline-block';
+                        
+                        // Store file reference temporarily until upload is confirmed
+                        currentUpload.file = file;
+                    }
+                });
+                
+                // Upload button handler
+                uploadBtn.addEventListener('click', function() {
+                    if (currentUpload.file && currentUpload.tab && currentUpload.slotId !== null) {
+                        const file = currentUpload.file;
+                        const tab = currentUpload.tab;
+                        const slotId = currentUpload.slotId;
+                        
+                        // Store file in memory
+                        fileStorage[tab][slotId - 1] = {
+                            name: file.name,
+                            type: file.type,
+                            file: file  // In a real app, you would upload to server here
+                        };
+                        
+                        // Update the UI
+                        updateFileSlot(tab, slotId, file.name, file.type);
+                        
+                        // Reset upload state
+                        currentUpload = { tab: null, slotId: null };
+                        currentUploadInfo.innerHTML = '';
+                        fileInput.value = '';
+                        uploadBtn.style.display = 'none';
+                        
+                        alert(`File "${file.name}" added to ${tab} tab, slot ${slotId}`);
+                    }
+                });
+                
+                // Initialize file slots
+                function initializeFileSlots() {
+                    const tabs = ['ebooks', 'movies', 'premium', 'apps'];
+                    
+                    tabs.forEach(tab => {
+                        const grid = document.getElementById(`${tab}-grid`);
+                        
+                        // Create 6 slots
+                        for (let i = 1; i <= 6; i++) {
+                            const slot = document.createElement('div');
+                            slot.className = 'file-slot';
+                            slot.dataset.slotId = i;
+                            slot.dataset.tab = tab;
+                            
+                            // Check if file exists in storage
+                            const fileData = fileStorage[tab][i - 1];
+                            
+                            if (fileData) {
+                                // Slot has a file
+                                updateFileSlot(tab, i, fileData.name, fileData.type, false);
+                            } else {
+                                // Empty slot
+                                slot.innerHTML = `
+                                    <div class="file-icon">📁</div>
+                                    <div class="file-name">Empty Slot</div>
+                                    <button class="add-file-btn" onclick="prepareUpload('${tab}', ${i})">Add File</button>
+                                `;
+                            }
+                            
+                            grid.appendChild(slot);
+                        }
+                    });
+                }
+                
+                // Update a file slot in the UI
+                function updateFileSlot(tab, slotId, fileName, fileType, isNew = true) {
+                    const grid = document.getElementById(`${tab}-grid`);
+                    const slot = grid.querySelector(`[data-slot-id="${slotId}"]`);
+                    
+                    // Determine icon based on file type
+                    let icon = '📁'; // Default icon
+                    if (fileType.includes('image')) icon = '🖼️';
+                    else if (fileType.includes('video')) icon = '🎬';
+                    else if (fileType.includes('audio')) icon = '🎵';
+                    else if (fileType.includes('pdf')) icon = '📄';
+                    else if (fileType.includes('zip') || fileType.includes('rar')) icon = '🗄️';
+                    
+                    slot.classList.remove('empty');
+                    slot.innerHTML = `
+                        <div class="file-icon">${icon}</div>
+                        <div class="file-name">${fileName}</div>
+                        <div class="file-price">₹10</div>
+                        <button class="buy-btn" onclick="initiatePayment('${fileName}')">Buy Now</button>
+                        <div class="payment-options" style="display:none;">
+                            <button class="payment-app-btn" onclick="redirectToPayment('gpay', '${fileName}')">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Google_Pay_%28GPay%29_Logo_%282018-2020%29.svg/1200px-Google_Pay_%28GPay%29_Logo_%282018-2020%29.svg.png" alt="GPay" class="payment-app-img">
+                            </button>
+                            <button class="payment-app-btn" onclick="redirectToPayment('phonepe', '${fileName}')">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/PhonePe_Logo.svg/2560px-PhonePe_Logo.svg.png" alt="PhonePe" class="payment-app-img">
+                            </button>
+                            <button class="payment-app-btn" onclick="redirectToPayment('paytm', '${fileName}')">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Paytm_logo.png/640px-Paytm_logo.png" alt="Paytm" class="payment-app-img">
+                            </button>
+                        </div>
+                        ${isNew ? `<button class="action-btn" onclick="removeFile('${tab}', ${slotId})" style="position: absolute; top: 10px; right: 10px;">❌</button>` : ''}
+                    `;
+                }
+            });
+            
+            // Global function to prepare file upload
+            function prepareUpload(tab, slotId) {
+                window.currentUpload = { tab, slotId };
+                document.getElementById('currentUploadInfo').innerHTML = `
+                    <p>Selected slot: ${tab} tab, slot ${slotId}</p>
+                    <p>Please choose a file to upload</p>
+                `;
+                document.getElementById('fileInput').click();
+            }
+            
+            // Function to initiate payment
+            function initiatePayment(fileName) {
+                const buyBtn = event.target;
+                const paymentOptions = buyBtn.nextElementSibling;
+                
+                // Toggle payment options visibility
+                if (paymentOptions.style.display === 'none') {
+                    paymentOptions.style.display = 'flex';
+                    buyBtn.textContent = 'Cancel';
+                } else {
+                    paymentOptions.style.display = 'none';
+                    buyBtn.textContent = 'Buy Now';
+                }
+            }
+            
+            // Function to redirect to payment apps
+            function redirectToPayment(app, fileName) {
+                let paymentUrl;
+                
+                // UPI Deep Links (replace with your actual UPI ID)
+                const upiId = 'yourupiid@axl'; // Replace with your UPI ID
+                const amount = '10'; // ₹10
+                const note = `Payment for ${fileName}`;
+                
+                switch(app) {
+                    case 'gpay':
+                        paymentUrl = `tez://upi/pay?pa=${upiId}&pn=YourBusinessName&am=${amount}&tn=${note}`;
+                        break;
+                    case 'phonepe':
+                        paymentUrl = `phonepe://pay?pa=${upiId}&pn=YourBusinessName&am=${amount}&tn=${note}`;
+                        break;
+                    case 'paytm':
+                        paymentUrl = `paytmmp://pay?pa=${upiId}&pn=YourBusinessName&am=${amount}&tn=${note}`;
+                        break;
+                    default:
+                        paymentUrl = `upi://pay?pa=${upiId}&pn=YourBusinessName&am=${amount}&tn=${note}`;
+                }
+                
+                // Try to open the payment app
+                window.location.href = paymentUrl;
+                
+                // Fallback if app is not installed
+                setTimeout(function() {
+                    if (!document.hidden) {
+                        // If still on page (app not opened), show alternative
+                        alert(`Please install ${app} or use another payment method.`);
+                        
+                        // Optionally open UPI payment URL in web
+                        window.open(`https://upi.link/pay/?pa=${upiId}&pn=YourBusinessName&am=${amount}&tn=${note}`, '_blank');
+                    }
+                }, 500);
+            }
+            
+            // Function to remove file from slot
+            function removeFile(tab, slotId) {
+                if (confirm('Are you sure you want to remove this file?')) {
+                    // Remove from storage
+                    fileStorage[tab][slotId - 1] = null;
+                    
+                    // Update UI
+                    const grid = document.getElementById(`${tab}-grid`);
+                    const slot = grid.querySelector(`[data-slot-id="${slotId}"]`);
+                    
+                    slot.classList.add('empty');
+                    slot.innerHTML = `
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Empty Slot</div>
+                        <button class="add-file-btn" onclick="prepareUpload('${tab}', ${slotId})">Add File</button>
+                    `;
+                    
+                    console.log(`File removed from ${tab} tab, slot ${slotId}`);
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
